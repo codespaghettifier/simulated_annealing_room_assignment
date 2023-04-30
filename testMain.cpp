@@ -4,6 +4,7 @@
 
 #include "include/Constants.hpp"
 #include "include/CostMatrix.hpp"
+#include "include/RoomsAssignment.hpp"
 
 using namespace std;
 
@@ -34,9 +35,12 @@ int main()
     //     cout << endl;
     // }
 
-    CostMatrix costMatrix;
-    costMatrix.loadFromJson(root);
-    std::cout << costMatrix << std::endl;
+    std::unique_ptr<CostMatrix> costMatrix = std::unique_ptr<CostMatrix>(new CostMatrix);
+    costMatrix->loadFromJson(root);
+    std::cout << *costMatrix.get() << std::endl << std::endl;
+
+    RoomsAssignment roomsAssignment(7, std::move(costMatrix));
+    std::cout << roomsAssignment << std::endl;
 
     // Close the file and exit
     file.close();
