@@ -42,6 +42,22 @@ int main()
     RoomsAssignment roomsAssignment(7, std::move(costMatrix));
     std::cout << roomsAssignment << std::endl;
 
+    std::cout << roomsAssignment.getSwapCost(0, true, 1, true) << std::endl;
+    roomsAssignment.swap(0, true, 1, true);
+    std::cout << roomsAssignment << std::endl;
+
+    std::cout << roomsAssignment.getSwapCost(0, true, 1, false) << std::endl;
+    roomsAssignment.swap(0, true, 1, false);
+    std::cout << roomsAssignment << std::endl;
+
+    std::cout << roomsAssignment.getSwapCost(0, false, 1, true) << std::endl;
+    roomsAssignment.swap(0, false, 1, true);
+    std::cout << roomsAssignment << std::endl;
+
+    std::cout << roomsAssignment.getSwapCost(0, false, 1, false) << std::endl;
+    roomsAssignment.swap(0, false, 1, false);
+    std::cout << roomsAssignment << std::endl;
+
     // Close the file and exit
     file.close();
     return 0;

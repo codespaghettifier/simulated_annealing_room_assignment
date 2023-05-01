@@ -38,14 +38,32 @@ void RoomsAssignment::calculateNaiveSolution()
     calculateCost();
 }
 
-unsigned RoomsAssignment::getAssignment(unsigned personId) const
+int RoomsAssignment::getSwapCost(unsigned roomA, bool personAFirst, unsigned roomB, bool personBFirst) const
 {
-    for(unsigned i = 0; i < numRooms; i++)
-    {
-        if(assignments[i].first == personId || assignments[i].second == personId) return i;
-    }
+    const int costBefore = costMatrix->getCost(assignments[roomA].first, assignments[roomA].second) + costMatrix->getCost(assignments[roomB].first, assignments[roomB].second);
+    const unsigned newRoomAFirst = personAFirst ? (personBFirst ? assignments[roomB].first : assignments[roomB].second) : assignments[roomA].first;
+    const unsigned newRoomASecond = personAFirst ? assignments[roomA].second : (personBFirst ? assignments[roomB].first : assignments[roomB].second);
+    const unsigned newRoomBFirst = personBFirst ? (personAFirst ? assignments[roomA].first : assignments[roomA].second) : assignments[roomB].first;
+    const unsigned newRoomBSecond = personBFirst ? assignments[roomB].second : (personAFirst ? assignments[roomA].first : assignments[roomA].second);
+    const int costAfter = costMatrix->getCost(newRoomAFirst, newRoomASecond) + costMatrix->getCost(newRoomBFirst, newRoomBSecond);
+    return costAfter - costBefore;
+}
 
-    throw std::out_of_range("Person not assigned to any room.");
+void RoomsAssignment::swap(unsigned roomA, bool personAFirst, unsigned roomB, bool personBFirst)
+{
+    const int costBefore = costMatrix->getCost(assignments[roomA].first, assignments[roomA].second) + costMatrix->getCost(assignments[roomB].first, assignments[roomB].second);
+    
+    const unsigned newRoomAFirst = personAFirst ? (personBFirst ? assignments[roomB].first : assignments[roomB].second) : assignments[roomA].first;
+    const unsigned newRoomASecond = personAFirst ? assignments[roomA].second : (personBFirst ? assignments[roomB].first : assignments[roomB].second);
+    const unsigned newRoomBFirst = personBFirst ? (personAFirst ? assignments[roomA].first : assignments[roomA].second) : assignments[roomB].first;
+    const unsigned newRoomBSecond = personBFirst ? assignments[roomB].second : (personAFirst ? assignments[roomA].first : assignments[roomA].second);
+    assignments[roomA].first = newRoomAFirst;
+    assignments[roomA].second = newRoomASecond;
+    assignments[roomB].first = newRoomBFirst;
+    assignments[roomB].second = newRoomBSecond;
+
+    const int costAfter = costMatrix->getCost(assignments[roomA].first, assignments[roomA].second) + costMatrix->getCost(assignments[roomB].first, assignments[roomB].second);
+    cost += costAfter - costBefore;
 }
 
 void RoomsAssignment::print(std::ostream& stream) const
