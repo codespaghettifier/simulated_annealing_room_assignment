@@ -7,6 +7,9 @@
 class CostMatrix
 {
 public:
+    CostMatrix() = default;
+    CostMatrix(const CostMatrix& other);
+
     void loadFromJson(const Json::Value& peopleJson);
     void print(std::ostream& stream) const;
     inline unsigned getSize() const;

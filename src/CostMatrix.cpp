@@ -1,5 +1,12 @@
 #include "../include/CostMatrix.hpp"
 
+CostMatrix::CostMatrix(const CostMatrix& other)
+: size(other.size)
+{
+    cost = std::make_unique<int[]>(size * size);
+    std::copy(other.cost.get(), other.cost.get() + size * size, cost.get());
+}
+
 void CostMatrix::loadFromJson(const Json::Value& peopleJson)
 {
     // The first person is not a real person. It's used to mark an empty slot.
