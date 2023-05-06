@@ -23,4 +23,9 @@ public:
 
     bool isRunnable() const;
     AnnealingTask& operator=(AnnealingTask&& other);
+    void print(std::ostream& stream) const;
+    std::pair<std::unique_ptr<char[]>, unsigned> serialize();
+    unsigned deserialize(const char* data);
 };
+
+std::ostream& operator<<(std::ostream& stream, const AnnealingTask& costMatrix);

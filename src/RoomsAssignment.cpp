@@ -1,5 +1,7 @@
 #include "../include/RoomsAssignment.hpp"
 
+#include <cstring>
+
 RoomsAssignment::RoomsAssignment(unsigned numRooms)
 : numRooms(numRooms)
 {
@@ -74,8 +76,8 @@ void RoomsAssignment::swap(unsigned roomA, bool personAFirst, unsigned roomB, bo
     if(newRoomAFirst == newRoomASecond || newRoomBFirst == newRoomBSecond) return;
     
     assignments[roomA].first = newRoomAFirst;
-    assignments[roomB].first = newRoomBFirst;
     assignments[roomA].second = newRoomASecond;
+    assignments[roomB].first = newRoomBFirst;
     assignments[roomB].second = newRoomBSecond;
 
     const int costAfter = costMatrix->getCost(assignments[roomA].first, assignments[roomA].second) + costMatrix->getCost(assignments[roomB].first, assignments[roomB].second);
@@ -86,7 +88,9 @@ void RoomsAssignment::print(std::ostream& stream) const
 {
     stream << "{";
 
-    stream << "rooms: ";
+    stream << "numRooms: " << numRooms;
+
+    stream << ", \nrooms: ";
     stream << "[";
     for(unsigned i = 0; i < numRooms; i++)
     {
@@ -103,6 +107,63 @@ void RoomsAssignment::print(std::ostream& stream) const
     stream << "}";
 }
 
+std::pair<std::unique_ptr<char[]>, unsigned> RoomsAssignment::serialize()
+{
+    if(!costMatrix) costMatrix = std::make_unique<CostMatrix>();
+    std::pair<std::unique_ptr<char[]>, unsigned> serializedCostMatrix = costMatrix->serialize();
+
+    const unsigned dataSize = sizeof(numRooms)
+            + numRooms * (sizeof(assignments[0].first) + sizeof(assignments[0].second))
+            + serializedCostMatrix.second
+            + sizeof(cost);
+    std::unique_ptr<char[]> data = std::make_unique<char[]>(dataSize);
+    char* start = data.get();
+
+    std::memcpy(start, &numRooms, sizeof(numRooms));
+    start += sizeof(numRooms);
+
+    for(unsigned i = 0; i < numRooms; i++)
+    {
+        std::memcpy(start, &assignments[i].first, sizeof(assignments[i].first));
+        start += sizeof(assignments[i].first);
+        std::memcpy(start, &assignments[i].second, sizeof(assignments[i].second));
+        start += sizeof(assignments[i].second);
+    }
+
+    std::memcpy(start, serializedCostMatrix.first.get(), serializedCostMatrix.second);
+    start += serializedCostMatrix.second;
+
+    std::memcpy(start, &cost, sizeof(cost));
+    start += sizeof(cost);
+
+    return std::make_pair(std::move(data), dataSize);
+}
+
+unsigned RoomsAssignment::deserialize(const char* data)
+{
+    const char* start = data;
+
+    std::memcpy(&numRooms, start, sizeof(numRooms));
+    start += sizeof(numRooms);
+
+    assignments = std::make_unique<Room[]>(numRooms);
+    for (unsigned i = 0; i < numRooms; i++)
+    {
+        std::memcpy(&assignments[i].first, start, sizeof(assignments[i].first));
+        start += sizeof(assignments[i].first);
+        std::memcpy(&assignments[i].second, start, sizeof(assignments[i].second));
+        start += sizeof(assignments[i].second);
+    }
+
+    costMatrix = std::make_unique<CostMatrix>();
+    start += costMatrix->deserialize(start);
+
+    std::memcpy(&cost, start, sizeof(cost));
+    start += sizeof(cost);
+
+    return start - data;
+}
+
 void RoomsAssignment::calculateCost()
 {
     cost = 0;
@@ -112,8 +173,8 @@ void RoomsAssignment::calculateCost()
     }
 }
 
-std::ostream& operator<<(std::ostream& stream, const RoomsAssignment& costMatrix)
+std::ostream& operator<<(std::ostream& stream, const RoomsAssignment& roomsAssignment)
 {
-    costMatrix.print(stream);
+    roomsAssignment.print(stream);
     return stream;
 }
