@@ -1,5 +1,7 @@
 #include "../include/CostMatrix.hpp"
 
+#include <cstring>
+
 CostMatrix::CostMatrix(const CostMatrix& other)
 : size(other.size)
 {
@@ -44,6 +46,37 @@ void CostMatrix::print(std::ostream& stream) const
     }
     stream << "]";
 }
+
+std::pair<std::unique_ptr<char[]>, unsigned> CostMatrix::serialize()
+{
+    unsigned dataSize = size * size * sizeof(int) + sizeof(unsigned);
+    std::unique_ptr<char[]> data = std::make_unique<char[]>(dataSize);
+
+    memcpy(data.get(), &size, sizeof(unsigned));
+
+    char* start = data.get() + sizeof(unsigned);
+    for(unsigned i = 0; i < size * size; i++)
+    {
+        memcpy(start, &cost[i], sizeof(cost[i]));
+        start += sizeof(cost[i]);
+    }
+
+    return std::make_pair(std::move(data), dataSize);
+}
+
+void CostMatrix::deserialize(const char* data)
+{
+    std::memcpy(&size, data, sizeof(unsigned));
+    cost = std::make_unique<int[]>(size * size);
+
+    const char* start = data + sizeof(unsigned);
+    for (unsigned i = 0; i < size * size; i++)
+    {
+        std::memcpy(&cost[i], start, sizeof(cost[i]));
+        start += sizeof(cost[i]);
+    }
+}
+
 
 std::ostream& operator<<(std::ostream& stream, const CostMatrix& costMatrix)
 {

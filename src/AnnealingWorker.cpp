@@ -21,8 +21,7 @@ void AnnealingWorker::run()
 
     if (!currentSolution) currentSolution = std::move(task.solution);
 
-    // TODO: Change random generator
-    std::srand(std::time(nullptr));
+    std::srand(task.randomGeneratorSeed);
 
     while(task.worseSolutionAcceptanceProbability >= task.worseSolutionAcceptanceProbabilityRange.first)
     {
@@ -68,8 +67,6 @@ void AnnealingWorker::onLowerCostSolutionFound()
 
     // Test implementation
     std::cout << "Lower cost solution found, cost: " << currentSolution->getCost() << std::endl;
-    std::cout << *currentSolution.get() << std::endl;
-
 
     updateLowestCost(currentSolution->getCost());
     run();    

@@ -74,8 +74,8 @@ void RoomsAssignment::swap(unsigned roomA, bool personAFirst, unsigned roomB, bo
     if(newRoomAFirst == newRoomASecond || newRoomBFirst == newRoomBSecond) return;
     
     assignments[roomA].first = newRoomAFirst;
-    assignments[roomB].first = newRoomBFirst;
     assignments[roomA].second = newRoomASecond;
+    assignments[roomB].first = newRoomBFirst;
     assignments[roomB].second = newRoomBSecond;
 
     const int costAfter = costMatrix->getCost(assignments[roomA].first, assignments[roomA].second) + costMatrix->getCost(assignments[roomB].first, assignments[roomB].second);

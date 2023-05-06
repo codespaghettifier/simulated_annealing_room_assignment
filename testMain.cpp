@@ -40,6 +40,21 @@ int main()
     costMatrix->loadFromJson(root);
     std::cout << *costMatrix.get() << std::endl << std::endl;
 
+    std::pair<std::unique_ptr<char[]>, unsigned> serializedCostMatrix;
+    {
+        std::unique_ptr<CostMatrix> costMatrix2 = std::unique_ptr<CostMatrix>(new CostMatrix);
+        costMatrix2->loadFromJson(root);
+        std::cout << *costMatrix2.get() << std::endl << std::endl;
+
+        serializedCostMatrix = costMatrix2->serialize();
+    }
+    std::cout<< "serialized data size: " << serializedCostMatrix.second << std::endl << std::endl;
+    {
+        std::unique_ptr<CostMatrix> costMatrix2 = std::make_unique<CostMatrix>();
+        costMatrix2->deserialize(serializedCostMatrix.first.get());
+        std::cout << *costMatrix2.get() << std::endl << std::endl;
+    }
+
     // RoomsAssignment roomsAssignment(7, std::move(costMatrix));
     // std::cout << roomsAssignment << std::endl;
 
