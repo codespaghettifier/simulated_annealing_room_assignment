@@ -6,7 +6,7 @@ CostMatrix::CostMatrix(const CostMatrix& other)
     cost = std::make_unique<int[]>(size * size);
     std::copy(other.cost.get(), other.cost.get() + size * size, cost.get());
 }
-
+/* JsonLib not working
 void CostMatrix::loadFromJson(const Json::Value& peopleJson)
 {
     // The first person is not a real person. It's used to mark an empty slot.
@@ -27,6 +27,7 @@ void CostMatrix::loadFromJson(const Json::Value& peopleJson)
         }
     }
 }
+*/
 
 void CostMatrix::print(std::ostream& stream) const
 {
