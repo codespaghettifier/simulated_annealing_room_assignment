@@ -47,18 +47,18 @@ void CostMatrix::print(std::ostream& stream) const
     stream << "]";
 }
 
-std::pair<std::unique_ptr<char[]>, unsigned> CostMatrix::serialize()
+std::pair<std::unique_ptr<char[]>, unsigned> CostMatrix::serialize() const
 {
     const unsigned dataSize = size * size * sizeof(cost[0]) + sizeof(size);
     std::unique_ptr<char[]> data = std::make_unique<char[]>(dataSize);
     char* start = data.get();
 
-    memcpy(start, &size, sizeof(size));
+    std::memcpy(start, &size, sizeof(size));
     start += sizeof(size);
 
     for(unsigned i = 0; i < size * size; i++)
     {
-        memcpy(start, &cost[i], sizeof(cost[i]));
+        std::memcpy(start, &cost[i], sizeof(cost[i]));
         start += sizeof(cost[i]);
     }
 

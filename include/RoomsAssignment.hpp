@@ -21,7 +21,7 @@ public:
     inline int getCost();
     void print(std::ostream& stream) const;
     std::pair<std::unique_ptr<char[]>, unsigned> serialize();
-    void deserialize(const char* data);
+    unsigned deserialize(const char* data);
 
 private:
     unsigned numRooms;
