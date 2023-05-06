@@ -7,6 +7,7 @@ class RoomsAssignment
     using Room = std::pair<unsigned, unsigned>;
 
 public:
+    RoomsAssignment() = default;
     RoomsAssignment(unsigned numRooms);
     RoomsAssignment(unsigned numRooms, std::unique_ptr<CostMatrix> costMatrix, bool calculateNaive = true);
     RoomsAssignment(const RoomsAssignment& other);
@@ -19,6 +20,8 @@ public:
     inline unsigned getNumRooms();
     inline int getCost();
     void print(std::ostream& stream) const;
+    std::pair<std::unique_ptr<char[]>, unsigned> serialize();
+    void deserialize(const char* data);
 
 private:
     unsigned numRooms;

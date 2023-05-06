@@ -42,7 +42,7 @@ int main()
 
     std::pair<std::unique_ptr<char[]>, unsigned> serializedCostMatrix;
     {
-        std::unique_ptr<CostMatrix> costMatrix2 = std::unique_ptr<CostMatrix>(new CostMatrix);
+        std::unique_ptr<CostMatrix> costMatrix2 = std::make_unique<CostMatrix>();
         costMatrix2->loadFromJson(root);
         std::cout << *costMatrix2.get() << std::endl << std::endl;
 
@@ -73,6 +73,23 @@ int main()
     // std::cout << roomsAssignment.getSwapCost(0, false, 1, false) << std::endl;
     // roomsAssignment.swap(0, false, 1, false);
     // std::cout << roomsAssignment << std::endl;
+
+    std::pair<std::unique_ptr<char[]>, unsigned> serializedRoomAssignment;
+    {
+        std::unique_ptr<CostMatrix> costMatrix2 = std::make_unique<CostMatrix>();
+        costMatrix2->loadFromJson(root);
+
+        std::unique_ptr<RoomsAssignment> roomsAssignment2 = std::make_unique<RoomsAssignment>(7, std::move(costMatrix2));
+        std::cout << *roomsAssignment2.get() << std::endl << std::endl;
+
+        serializedRoomAssignment = roomsAssignment2->serialize();
+    }
+    std::cout<< "serialized data size: " << serializedRoomAssignment.second << std::endl << std::endl;
+    {
+        std::unique_ptr<RoomsAssignment> roomsAssignment2 = std::make_unique<RoomsAssignment>();
+        roomsAssignment2->deserialize(serializedRoomAssignment.first.get());
+        std::cout << *roomsAssignment2.get() << std::endl << std::endl;
+    }
 
     AnnealingTask task;
     task.numRooms = 7;

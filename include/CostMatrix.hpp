@@ -15,7 +15,7 @@ public:
     inline unsigned getSize() const;
     inline int getCost(unsigned personA, unsigned personB) const;
     std::pair<std::unique_ptr<char[]>, unsigned> serialize();
-    void deserialize(const char* data);
+    unsigned deserialize(const char* data);
 
 private:
     unsigned size = 0;

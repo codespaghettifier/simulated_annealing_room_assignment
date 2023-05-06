@@ -49,12 +49,13 @@ void CostMatrix::print(std::ostream& stream) const
 
 std::pair<std::unique_ptr<char[]>, unsigned> CostMatrix::serialize()
 {
-    unsigned dataSize = size * size * sizeof(int) + sizeof(unsigned);
+    const unsigned dataSize = size * size * sizeof(cost[0]) + sizeof(size);
     std::unique_ptr<char[]> data = std::make_unique<char[]>(dataSize);
+    char* start = data.get();
 
-    memcpy(data.get(), &size, sizeof(unsigned));
+    memcpy(start, &size, sizeof(size));
+    start += sizeof(size);
 
-    char* start = data.get() + sizeof(unsigned);
     for(unsigned i = 0; i < size * size; i++)
     {
         memcpy(start, &cost[i], sizeof(cost[i]));
@@ -64,17 +65,19 @@ std::pair<std::unique_ptr<char[]>, unsigned> CostMatrix::serialize()
     return std::make_pair(std::move(data), dataSize);
 }
 
-void CostMatrix::deserialize(const char* data)
+unsigned CostMatrix::deserialize(const char* data)
 {
-    std::memcpy(&size, data, sizeof(unsigned));
-    cost = std::make_unique<int[]>(size * size);
+    std::memcpy(&size, data, sizeof(size));
+    const char* start = data + sizeof(size);
 
-    const char* start = data + sizeof(unsigned);
+    cost = std::make_unique<int[]>(size * size);
     for (unsigned i = 0; i < size * size; i++)
     {
         std::memcpy(&cost[i], start, sizeof(cost[i]));
         start += sizeof(cost[i]);
     }
+
+    return start - data;
 }
 
 
