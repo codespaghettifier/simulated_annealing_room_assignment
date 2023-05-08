@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <iostream>
-//Required jsoncpp lib
 //#include <jsoncpp/json/json.h>
 
 // Person with index 0 represents an empty slot.
@@ -16,6 +15,8 @@ public:
     void print(std::ostream& stream) const;
     inline unsigned getSize() const;
     inline int getCost(unsigned personA, unsigned personB) const;
+    std::pair<std::unique_ptr<char[]>, unsigned> serialize() const;
+    unsigned deserialize(const char* data);
 
     //temp function until jsoncpp works
     void loadFromTab(int **matrix);
