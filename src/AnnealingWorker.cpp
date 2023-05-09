@@ -69,16 +69,12 @@ void AnnealingWorker::run()
 void AnnealingWorker::onLowerCostSolutionFound()
 {
 
-    // Test implementation
     std::cout << "Lower cost solution found, cost: " << currentSolution->getCost() << std::endl;
-    //updateLowestCost(currentSolution->getCost());
-    //run();    
-    
-    // TODO:
+   
     // Send message to the master here
     // In response, task should be modified (decreased lowestCost) for all workers or a new task shoud be set.
     // After that run should be called again.
-    //MPI_Request request;
+
     std::pair<int, const unsigned int> lowerSolutionFound = {currentSolution->getCost(), LOWER_COST_SOLUTION_FOUND};
     MPI_Send(&lowerSolutionFound, sizeof(lowerSolutionFound), MPI_BYTE, MASTER, TAG, MPI_COMM_WORLD);
 }
@@ -86,7 +82,7 @@ void AnnealingWorker::onLowerCostSolutionFound()
 void AnnealingWorker::onFinish()
 {
     // Send message to the master here
-    //MPI_Request request;
+
     std::pair<int, const unsigned int> finalSolutionFound = {currentSolution->getCost(), FINAL_SOLUTION_FOUND};
     MPI_Send(&finalSolutionFound, sizeof(finalSolutionFound), MPI_BYTE, MASTER, TAG, MPI_COMM_WORLD);
     
